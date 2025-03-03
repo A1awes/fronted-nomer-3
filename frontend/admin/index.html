@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Админ-панель</title>
+  <style>
+    .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+    .form-group { margin: 10px 0; }
+    input, button { padding: 8px; margin: 5px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Управление товарами</h1>
+    
+    <!-- Форма добавления -->
+    <div>
+      <h3>Добавить товар</h3>
+      <div class="form-group">
+        <input id="name" placeholder="Название">
+        <input id="price" type="number" placeholder="Цена">
+      </div>
+      <div class="form-group">
+        <input id="description" placeholder="Описание" style="width: 300px;">
+      </div>
+      <div class="form-group">
+        <input id="category" placeholder="Категории (через запятую)">
+      </div>
+      <button onclick="addProduct()">Добавить</button>
+    </div>
+
+    <!-- Таблица товаров -->
+    <h3>Список товаров</h3>
+    <table id="productsTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Название</th>
+          <th>Цена</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const API = 'http://localhost:8080/products';
+
+    // Загрузка данных
+    async function loadProducts() {
+      const response = await fetch(API);
+      const products = await response.json();
+      
+      const tbody = document.querySelector('#productsTable tbody');
+      tbody.innerHTML = '';
+      
+      products.forEach(p => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${p.id}</td>
+          <td>${p.name}</td>
+          <td>${p.price} ₽</td>
+          <td>
+            <button onclick="editProduct(${p.id})">✏️</button>
+            <button onclick="deleteProduct(${p.id})">❌</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Добавление товара
+    async function addProduct() {
+  const product = {
+    name: document.getElementById('name').value,
+    price: Number(document.getElementById('price').value), // Важно!
+    description: document.getElementById('description').value,
+    category: document.getElementById('category').value
+      .split(',')
+      .map(c => c.trim())
+      .filter(c => c !== '') // Удалить пустые категории
+  };
+
+  // Добавьте валидацию
+  if (!product.name || !product.price || !product.description) {
+    alert('Заполните все поля!');
+    return;
+  }
+
+  try {
+    const response = await fetch(API, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert(`Ошибка: ${errorData.message || response.statusText}`);
+      return;
+    }
+
+    loadProducts();
+  } catch (error) {
+    console.error('Ошибка:', error);
+    alert('Произошла ошибка при добавлении товара');
+  }
+}
+
+    // Удаление
+    async function deleteProduct(id) {
+      await fetch(`${API}/${id}`, { method: 'DELETE' });
+      loadProducts();
+    }
+
+    // Первоначальная загрузка
+    loadProducts();
+  </script>
+</body>
+</html>

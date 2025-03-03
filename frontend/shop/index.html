@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Магазин</title>
+  <style>
+    .category {
+      margin: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .product {
+      display: inline-block;
+      width: 250px;
+      margin: 10px;
+      padding: 15px;
+      border: 1px solid #eee;
+      vertical-align: top;
+    }
+  </style>
+</head>
+<body>
+  <h1>Каталог товаров</h1>
+  <div id="catalog"></div>
+
+  <script>
+    fetch('http://localhost:3000/products')
+      .then(res => res.json())
+      .then(products => {
+        const grouped = products.reduce((acc, product) => {
+          product.category.forEach(cat => {
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(product);
+          });
+          return acc;
+        }, {});
+
+        const catalog = document.getElementById('catalog');
+        Object.entries(grouped).forEach(([category, items]) => {
+          const section = document.createElement('div');
+          section.className = 'category';
+          section.innerHTML = `<h2>${category}</h2>`;
+          
+          items.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product';
+            card.innerHTML = `
+              <h3>${product.name}</h3>
+              <p>${product.description}</p>
+              <p><strong>Цена: ${product.price.toLocaleString()} ₽</strong></p>
+            `;
+            section.appendChild(card);
+          });
+          
+          catalog.appendChild(section);
+        });
+      });
+  </script>
+</body>
+</html>

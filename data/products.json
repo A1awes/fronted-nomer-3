@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Ноутбук HP",
+    "price": 54990,
+    "description": "15.6 дюймов, Intel Core i5",
+    "category": ["Электроника", "Офисная техника"]
+  },
+  {
+    "id": 2,
+    "name": "Книга 'Clean Code'",
+    "price": 2100,
+    "description": "Роберт Мартин",
+    "category": ["Книги"]
+  },
+  {
+    "id": 3,
+    "name": "Кофемашина",
+    "price": 29900,
+    "description": "Автоматическая капсульная",
+    "category": ["Бытовая техника"]
+  },
+  {
+    "id": 4,
+    "name": "Смартфон Xiaomi",
+    "price": 18990,
+    "description": "6.5'' AMOLED, 128GB",
+    "category": ["Электроника"]
+  },
+  {
+    "id": 5,
+    "name": "Настольная лампа",
+    "price": 1490,
+    "description": "LED, регулируемая яркость",
+    "category": ["Офисная техника", "Дом"]
+  }
+]
